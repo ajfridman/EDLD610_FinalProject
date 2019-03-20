@@ -1,22 +1,13 @@
 ---
 title: "EDLD610_FinalProj"
 author: "Andrew Fridman"
-date: "February 27, 2019"
+date: "March 20, 2019"
 output: html_document
 ---
 
 ```{r Setup, include = FALSE}
 #Load libraries
-library(colorblindr)
-library(dplyr)
-library(here)
-library(ggplot2)
-library(gsubfn)
-library(lubridate)
-library(psych)
-library(rio)
-library(snakecase)
-library(tidyverse)
+pacman::p_load(colorblindr, here, gsubfn, lubridate, psych, snakecase, tidyverse)
 ```
 
 ```{r Import data}
@@ -96,7 +87,7 @@ coffee_reviews <- coffee_join %>%
                               select(country, region) %>% 
                               count(country, region)
 
-#Histogram: Number of reviews by country (with region highlighted)
+#Version 1 - Histogram: Number of reviews by country (with region highlighted)
 ggplot(coffee_reviews, aes(fct_reorder(country, n), n)) +
        geom_col(aes(fill = region),
                 color = "white",
@@ -113,7 +104,8 @@ coffee_reviews_reg <- coffee_join %>%
                                   select(region) %>% 
                                   count(region)
 
-#Histogram: Number of reviews by country
+
+#Version 2 - Histogram: Number of reviews by country
 ggplot(coffee_reviews_reg, aes(fct_reorder(region, n), n)) +
        geom_col(aes(fill = region),
                 color = "white",
@@ -125,16 +117,28 @@ ggplot(coffee_reviews_reg, aes(fct_reorder(region, n), n)) +
             x = "Region",
             y = "Reviews")
 
+#Version 3 - Histogram: Number of reviews by country
+ggplot(coffee_reviews_reg, aes(fct_reorder(region, n), n)) +
+       geom_col(fill = "#56B4E9",
+                color = "white",
+                alpha = 0.7) +
+       coord_flip() +
+       scale_fill_OkabeIto() +
+       theme_minimal() +
+       theme(legend.position = "none") +
+       labs(title = "Total Reviews by Region",
+            x = "Region",
+            y = "Reviews")
 ```
 
-```{r Visualization 2 - Total points by country and region}
+```{r Visualization 2 - Total points by country and region, fig.height = 4, fig.width = 4}
 #Tidy data
 coffee_countries <- coffee_join %>% 
                        select(country, region, total_points) %>% 
                        group_by(country, region) %>% 
                        summarise(total_points_m = mean(total_points, na.rm = TRUE)) 
 
-#Total score by country (with regions highlighted)
+#Version 1 - Total score by country (with regions highlighted)
 ggplot(coffee_countries, aes(fct_reorder(country, total_points_m), total_points_m)) +
        geom_col(aes(fill = region),
                 color = "white",
@@ -155,7 +159,7 @@ coffee_regions <- coffee_join %>%
                               group_by(region) %>% 
                               summarise(total_points_m = mean(total_points, na.rm = TRUE))
 
-#Total score by region
+#Version 2 - Total score by region
 ggplot(coffee_regions, aes(fct_reorder(region, total_points_m), total_points_m)) +
        geom_col(aes(fill = region),
                 color = "white",
@@ -169,12 +173,27 @@ ggplot(coffee_regions, aes(fct_reorder(region, total_points_m), total_points_m))
        labs(title = "Total Points by Region",
             x = "Region",
             y = "Total Points")
+
+#Version 3 - Total score by region
+ggplot(coffee_regions, aes(fct_reorder(region, total_points_m), total_points_m)) +
+       geom_col(fill = "#56B4E9",
+                color = "white",
+                alpha = 0.7) +
+       geom_text(aes(region, total_points_m, label = round(total_points_m, 2)),
+                 nudge_y = -2,
+                 size = 3.5) +
+       coord_flip() +
+       theme_minimal() +
+       theme(legend.position = "none") +
+       labs(title = "Total Points by Region",
+            x = "Region",
+            y = "Total Points")
 ```
 
 ```{r Visualization 3 - Mean quality metrics by species}
 #Tidy data
 coffee_species <- coffee %>% 
-                         select(-country, -year) %>% 
+                         select(-country) %>% 
                          group_by(species) %>% 
                          summarise(Aroma = mean(aroma, na.rm = TRUE),
                                    Flavor = mean(flavor, na.rm = TRUE),
@@ -188,7 +207,7 @@ coffee_species <- coffee %>%
                          gather(metric, score, -1) %>% 
                          mutate(metric = as.factor(metric))
 
-#Mean quality metrics by species
+#Version 1 - Mean quality metrics by species
 ggplot(coffee_species, aes(fct_reorder(metric, score), score)) +
        geom_col(aes(fill = species), 
                 position = "dodge",
@@ -201,13 +220,11 @@ ggplot(coffee_species, aes(fct_reorder(metric, score), score)) +
             x = "Quality Metrics",
             y = "Score")
 
-######Other possible versions#####
-
-#Line difference in mean quality metrics by species
+#Version 2 - Line difference in mean quality metrics by species
 ggplot(coffee_species, aes(fct_reorder(metric, score), score)) +
        geom_point(aes(color = species),
                   alpha = 0.7,
-                  size = 5) +
+                  size = 3) +
        geom_line(aes(group = metric)) +
        coord_flip() +
        scale_color_OkabeIto() +
@@ -223,7 +240,7 @@ coffee_species_diff <- coffee_species %>%
                                       mutate(diff = Arabica - Robusta,
                                              metric = fct_reorder(metric, diff))
 
-#Point difference in mean quality metrics by species
+#Version 3 - Point difference in mean quality metrics by species
 ggplot(coffee_species_diff, aes(fct_reorder(metric, diff), diff)) +
        geom_hline(yintercept = 0,
                   color = "gray70",
