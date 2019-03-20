@@ -1,0 +1,63 @@
+---
+title: "Dashboard Example"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(colorblindr)
+library(flexdashboard)
+library(plotly)
+library(psych)
+library(tidyverse)
+library(xaringan)
+```
+
+#Page 1
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Chart A
+
+```{r First Plot}
+#Tidy
+data <- mtcars %>% 
+               select(cyl, mpg, disp) %>% 
+               mutate(cyl = as.factor(cyl))
+
+#Plot 1
+p <- ggplot(data, aes(x = mpg, y = disp)) +
+      geom_point(aes(color = cyl)) +
+      geom_smooth(method = "lm",
+                  color = "black",
+                  se = FALSE) +
+      theme_minimal() +
+      labs(title = "The relationship between MPG and displacement",
+            x = "MPG",
+            y = "Displacement")
+
+ggplotly(p) #Shows (x, y) coordinates for each data point
+```
+
+> Here's a plot of MPG vs. Displacement for some cars (text for a specific figure)
+
+#Page 2
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Chart B
+
+```{r Second Plot}
+
+```
+
+### Chart C
+
+```{r Third Plot}
+
+```
+
