@@ -10,7 +10,7 @@ output:
 
 ```{r setup, include = FALSE}
 #Load libraries
-pacman::p_load(colorblindr, tidyverse, here, gsubfn, lubridate, psych, snakecase)
+pacman::p_load(colorblindr, flexdashboard, here, gsubfn, lubridate, psych, snakecase, tidyverse)
 
 #Import arabica data
 arabica <- rio::import("arabica_data_cleaned.csv")
@@ -131,39 +131,14 @@ coffee_species_diff <- coffee_species %>%
                                              metric = fct_reorder(metric, diff))
 ```
 
-#Page 1
+#Visualization 1
 
-Column {data-width=650}
+Column {data-width=750}
 -----------------------------------------------------------------------
 
-### Chart A
+### Final Version
 
-```{r First Plot}
-
-#Version 1 - Histogram: Number of reviews by country (with region highlighted)
-ggplot(coffee_reviews, aes(fct_reorder(country, n), n)) +
-       geom_col(aes(fill = region),
-                color = "white",
-                alpha = 0.7) +
-       coord_flip() +
-       scale_fill_OkabeIto() +
-       theme_minimal() +
-       labs(title = "Total Reviews by Country",
-            x = "Country",
-            y = "Reviews")
-
-#Version 2 - Histogram: Number of reviews by country
-ggplot(coffee_reviews_reg, aes(fct_reorder(region, n), n)) +
-       geom_col(aes(fill = region),
-                color = "white",
-                alpha = 0.7) +
-       coord_flip() +
-       scale_fill_OkabeIto() +
-       theme_minimal() +
-       labs(title = "Total Reviews by Region",
-            x = "Region",
-            y = "Reviews")
-
+```{r Plot 1 Version 3}
 #Version 3 - Histogram: Number of reviews by country
 ggplot(coffee_reviews_reg, aes(fct_reorder(region, n), n)) +
        geom_col(fill = "#56B4E9",
@@ -176,56 +151,64 @@ ggplot(coffee_reviews_reg, aes(fct_reorder(region, n), n)) +
        labs(title = "Total Reviews by Region",
             x = "Region",
             y = "Reviews")
-
 ```
 
-> Here's a plot of MPG vs. Displacement for some cars (text for a specific figure)
+> The final version of the plot is the most minimal and succinct representation of the coffee reviews. I think that this version has the least cognitive load for the general audience. The histogram will hopefully assist coffee lovers with general guidelines for the popularity/reputation and distribution of various world regions. 
 
-#Page 2
-
-Column {data-width=350}
+Column {data-width=400}
 -----------------------------------------------------------------------
 
-### Chart B
+### Version 2
 
-```{r Second Plot}
-#Version 1 - Total score by country (with regions highlighted)
-ggplot(coffee_countries, aes(fct_reorder(country, total_points_m), total_points_m)) +
+```{r Plot 1 Version 2}
+#Version 2 - Histogram: Number of reviews by country
+ggplot(coffee_reviews_reg, aes(fct_reorder(region, n), n)) +
        geom_col(aes(fill = region),
                 color = "white",
                 alpha = 0.7) +
-       geom_text(aes(country, total_points_m, label = round(total_points_m, 2)),
-                 nudge_y = -2,
-                 size = 2.5) +
        coord_flip() +
        scale_fill_OkabeIto() +
        theme_minimal() +
-       labs(title = "Total Points by Country",
-            x = "Country",
-            y = "Total Points")
-
-#Version 2 - Total score by region
-ggplot(coffee_regions, aes(fct_reorder(region, total_points_m), total_points_m)) +
-       geom_col(aes(fill = region),
-                color = "white",
-                alpha = 0.7) +
-       geom_text(aes(region, total_points_m, label = round(total_points_m, 2)),
-                 nudge_y = -2,
-                 size = 2.5) +
-       coord_flip() +
-       scale_fill_OkabeIto() +
-       theme_minimal() +
-       labs(title = "Total Points by Region",
+       labs(title = "Total Reviews by Region",
             x = "Region",
-            y = "Total Points")
+            y = "Reviews")
+```
 
+> I believe this plot is a definite upgrade, but I decided that the legend and fill were superfluous.
+
+### Version 1
+
+```{r Plot 1 Version 1}
+#Version 1 - Histogram: Number of reviews by country (with region highlighted)
+ggplot(coffee_reviews, aes(fct_reorder(country, n), n)) +
+       geom_col(aes(fill = region),
+                color = "white",
+                alpha = 0.7) +
+       coord_flip() +
+       scale_fill_OkabeIto() +
+       theme_minimal() +
+       labs(title = "Total Reviews by Country",
+            x = "Country",
+            y = "Reviews")
+```
+
+> The plot is a nice portrayl of individual countries, but I think the information can be more clearly communicated in a concicse manner.
+
+#Visualization 2
+
+Column {data-width=750}
+-----------------------------------------------------------------------
+
+### Final Version
+
+```{r Plot 2 Version 3}
 #Version 3 - Total score by region
 ggplot(coffee_regions, aes(fct_reorder(region, total_points_m), total_points_m)) +
        geom_col(fill = "#56B4E9",
                 color = "white",
                 alpha = 0.7) +
        geom_text(aes(region, total_points_m, label = round(total_points_m, 2)),
-                 nudge_y = -2,
+                 nudge_y = -4,
                  size = 3.5) +
        coord_flip() +
        theme_minimal() +
@@ -235,22 +218,61 @@ ggplot(coffee_regions, aes(fct_reorder(region, total_points_m), total_points_m))
             y = "Total Points")
 ```
 
-### Chart C
+> Similar to the first visualization, this plot is most easily understood as a minimal representation of the data. At the recommendation of my peer reviewers, I removed the legend and Okabe Ito fill to improve clarity. The plot is meant as a companion piece to the first visualization, providing a general audience broad insight into regional coffee quality.
 
-```{r Third Plot}
-#Version 1 - Mean quality metrics by species
-ggplot(coffee_species, aes(fct_reorder(metric, score), score)) +
-       geom_col(aes(fill = species), 
-                position = "dodge",
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Version 2
+
+```{r Plot 2 Version 2}
+#Version 2 - Total score by region
+ggplot(coffee_regions, aes(fct_reorder(region, total_points_m), total_points_m)) +
+       geom_col(aes(fill = region),
+                color = "white",
                 alpha = 0.7) +
+       geom_text(aes(region, total_points_m, label = round(total_points_m, 2)),
+                 nudge_y = -4,
+                 size = 2.5) +
        coord_flip() +
-       scale_color_OkabeIto() +
+       scale_fill_OkabeIto() +
        theme_minimal() +
-       theme_minimal() +
-       labs(title = "Comparison of quality metric scores by coffee bean species",
-            x = "Quality Metrics",
-            y = "Score")
+       labs(title = "Total Points by Region",
+            x = "Region",
+            y = "Total Points")
+```
 
+> This plot condensed the countries into broad world regions, which helps simplify the overall purpose/message. However, there is still more to be removed from this plot without compromising the clairty.
+
+### Version 1
+
+```{r Plot 2 Version 1}
+#Version 1 - Total score by country (with regions highlighted)
+ggplot(coffee_countries, aes(fct_reorder(country, total_points_m), total_points_m)) +
+       geom_col(aes(fill = region),
+                color = "white",
+                alpha = 0.7) +
+       geom_text(aes(country, total_points_m, label = round(total_points_m, 2)),
+                 nudge_y = -4,
+                 size = 2.5) +
+       coord_flip() +
+       scale_fill_OkabeIto() +
+       theme_minimal() +
+       labs(title = "Total Points by Country",
+            x = "Country",
+            y = "Total Points")
+```
+
+> A good initial effort, but I can definitely improve upon it! Since there are no clear trends in world region, I believe that I can collapse the data to world regions.
+
+#Visualization 3
+
+Column {data-width=750}
+-----------------------------------------------------------------------
+
+### Final Version
+
+```{r Plot 3 Version 2}
 #Version 2 - Line difference in mean quality metrics by species
 ggplot(coffee_species, aes(fct_reorder(metric, score), score)) +
        geom_point(aes(color = species),
@@ -263,7 +285,16 @@ ggplot(coffee_species, aes(fct_reorder(metric, score), score)) +
        labs(title = "Comparison of quality metric scores by coffee bean species",
             x = "Quality Metrics",
             y = "Score")
+```
 
+> The final version of this plot most clearly portrays the difference in inidividual quality metric scores. This is especially evidence in the sweetness metric, which has the longest line between point totals. This plot has a broad appeal, and can provide useful information to both a general audience as well as professional coffee organizations. Interestingly, despite numerous reports, these two species are remarkably similar across all quality metrics other than sweetness. 
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Version 2
+
+```{r Plot 3 Version 3}
 #Version 3 - Point difference in mean quality metrics by species
 ggplot(coffee_species_diff, aes(fct_reorder(metric, diff), diff)) +
        geom_hline(yintercept = 0,
@@ -280,3 +311,23 @@ ggplot(coffee_species_diff, aes(fct_reorder(metric, diff), diff)) +
             y = "Difference in Score (Points)")
 ```
 
+> This plot is a significant departure from the earlier version, focusing on the difference in point totals between the two bean species. Although the difference in sweetness scores is more visible, I think that this plot is less convincing/clear overall. There is still more work to be done!
+
+### Version 1
+
+```{r Plot 3 Version 1}
+#Version 1 - Mean quality metrics by species
+ggplot(coffee_species, aes(fct_reorder(metric, score), score)) +
+       geom_col(aes(fill = species), 
+                position = "dodge",
+                alpha = 0.7) +
+       coord_flip() +
+       scale_color_OkabeIto() +
+       theme_minimal() +
+       theme_minimal() +
+       labs(title = "Comparison of quality metric scores by coffee bean species",
+            x = "Quality Metrics",
+            y = "Score")
+```
+
+> The stacked bar plots reveal that overall there is little difference betwen the two difference coffee bean species. The only exception is the difference in sweetness between the beans. However, I feel that this is not a clear plot, and the message can be highlighted in a different manner.
